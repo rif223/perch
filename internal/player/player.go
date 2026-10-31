@@ -296,26 +296,27 @@ func (m *Manager) spawnLocked(src Source) error {
 	return nil
 }
 
-// adoptWindow waits for mpv's window, then shows it under Perch's taskbar
-// icon (shared AppID) and with Perch's window icon.
+// adoptWindow shows mpv's window under Perch's taskbar icon (shared AppID)
+// and with Perch's window icon. mpv only creates the window once yt-dlp has
+// resolved the stream, which can take well over ten seconds, so this watches
+// for the whole session and also adopts a window mpv re-creates.
 func (m *Manager) adoptWindow(s *session) {
-	tick := time.NewTicker(50 * time.Millisecond)
+	tick := time.NewTicker(100 * time.Millisecond)
 	defer tick.Stop()
-	deadline := time.After(15 * time.Second)
+	var adopted windows.HWND
 	for {
-		if hwnd := m.window(s); hwnd != 0 {
+		if hwnd := m.window(s); hwnd != 0 && hwnd != adopted {
 			_ = setWindowAppID(hwnd, AppID)
 			copyAppIcon(hwnd)
-			if st := m.State(); st.Opacity < 100 {
-				_ = setTransparency(hwnd, st.Opacity, false)
+			if st := m.State(); st.Opacity < 100 || st.ClickThrough {
+				_ = setTransparency(hwnd, st.Opacity, st.ClickThrough)
 			}
-			return
+			adopted = hwnd
+			tick.Reset(time.Second) // from now on only watch for a re-created window
 		}
 		select {
 		case <-tick.C:
 		case <-s.done:
-			return
-		case <-deadline:
 			return
 		}
 	}
