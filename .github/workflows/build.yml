@@ -35,8 +35,7 @@ jobs:
             "C:\Program Files (x86)\NSIS" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
           }
 
-      # Builds Perch-amd64.exe, Perch-arm64.exe and one installer that picks
-      # the native architecture at install time.
+      # Builds Perch-amd64.exe, Perch-arm64.exe and an installer for each.
       - name: Build
         run: wails build -clean -platform windows/amd64,windows/arm64 -nsis
 

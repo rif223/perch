@@ -57,9 +57,12 @@ Download the latest release from the **Releases** page:
 
 | File | Use |
 |---|---|
-| `Perch-amd64_arm64-installer.exe` | Installer – picks ARM64 or x64 automatically |
-| `Perch-arm64.exe` | Portable, for ARM64 PCs (e.g. Snapdragon X) |
+| `Perch-arm64-installer.exe` | Installer for ARM64 PCs (e.g. Snapdragon X) |
+| `Perch-amd64-installer.exe` | Installer for x64 PCs (Intel / AMD) |
+| `Perch-arm64.exe` | Portable, for ARM64 PCs |
 | `Perch-amd64.exe` | Portable, for x64 PCs |
+
+Not sure which one? Settings › System › About › *System type* says "ARM-based" or "x64-based".
 
 ## Using the player window
 
@@ -85,7 +88,7 @@ go install github.com/wailsapp/wails/v2/cmd/wails@v2.17.0
 
 wails dev                                                  # live development
 wails build -platform windows/amd64,windows/arm64          # both EXEs in build/bin
-wails build -platform windows/amd64,windows/arm64 -nsis    # plus installer (needs NSIS)
+wails build -platform windows/amd64,windows/arm64 -nsis    # plus installers (needs NSIS)
 go test ./...                                              # after a build (embeds frontend/dist)
 ```
 
